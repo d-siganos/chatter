@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 import { io, Socket } from 'socket.io-client';
+import axios from 'axios';
 import { useAuth } from '../contexts/authContext';
 import { Sidebar, Messages, MessageInput } from '.';
 import useDarkMode from '../hooks/useDarkMode';
@@ -41,13 +42,17 @@ const Dashboard = () => {
 
     setName(name_);
     setRoom(room_);
-    
-    socket.current?.emit('join', { username: name_, room: room_ });
 
-    socket.current?.on('message', messageData => {
-      setMessages((oldMessages: Array<any>) => [...oldMessages, messageData]);
+    axios.get(`${ENDPOINT}messages/${room_}`).then(res => {
+      setMessages(res.data);
+
+      socket.current?.emit('join', { username: name_, room: room_ });
+
+      socket.current?.on('message', messageData => {
+        setMessages((oldMessages: Array<any>) => [...oldMessages, messageData]);
+      });
     });
-
+    
     return () => {
       socket.current?.off('message');
       socket.current?.disconnect();

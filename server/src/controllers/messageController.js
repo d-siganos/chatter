@@ -1,15 +1,7 @@
 const connect = require('../dbConnection');
 const Message = require('../models/messageModel');
 
-// const router = express.Router();
-
-// router.route("/:room").get((req, res, next) => {
-  
-// });
-
-// module.exports = router;
-
-exports.findAll = (req, res) => {
+exports.findAllMessages = (req, res) => {
   if (!req.params.room) {
     res.status(400).send({
       error: "400 Bad Request",
