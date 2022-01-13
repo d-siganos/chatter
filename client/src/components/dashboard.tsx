@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 import { io, Socket } from 'socket.io-client';
 import axios from 'axios';
 import { useAuth } from '../contexts/authContext';
-import { Sidebar, Messages, MessageInput } from '.';
+import { Sidebar, Messages, MessageInput, SkeletonMessages } from '.';
 import useDarkMode from '../hooks/useDarkMode';
 
 import { FaMoon, FaSun } from 'react-icons/fa';
@@ -24,13 +24,14 @@ const ThemeIcon = () => {
 };
 
 const Dashboard = () => {
-  const ENDPOINT:string = process.env.REACT_APP_SERVER_ENDPOINT || "http://localhost:8080/";
+  const ENDPOINT:string =  process.env.NODE_ENV === 'production' ? "https://chatter-js-app.herokuapp.com/" : "http://localhost:8080/";
 
   const { signout, currentUser } = useAuth();
   const [name, setName] = useState<string | null | undefined>('');
   const [room, setRoom] = useState<string | null | undefined>('');
   const [message, setMessage] = useState<string>('');
   const [messages, setMessages] = useState<any>([]);
+  const [loading, setLoading] = useState<boolean>(true);
   const history = useHistory();
   const socket = useRef<Socket | null>(null);
 
@@ -42,9 +43,11 @@ const Dashboard = () => {
 
     setName(name_);
     setRoom(room_);
+    setLoading(true);
 
     axios.get(`${ENDPOINT}messages/${room_}`).then(res => {
       setMessages(res.data);
+      setLoading(false);
 
       socket.current?.emit('join', { username: name_, room: room_ });
 
@@ -67,7 +70,7 @@ const Dashboard = () => {
   const sendMessage = async (event: React.KeyboardEvent<HTMLInputElement> | null) => {
     event?.preventDefault();
 
-    if (message) {
+    if (message && !loading) {
       const messageData = {
         room: room,
         user: name,
@@ -88,7 +91,10 @@ const Dashboard = () => {
           <span className="text-gray-800 dark:text-gray-200 text-lg font-semibold pl-6">{room}</span>
           <ThemeIcon />
         </div>
-        <Messages messages={messages} name={name} />
+        {loading
+          ? <SkeletonMessages />
+          : <Messages messages={messages} name={name} />
+        }
         <MessageInput message={message} setMessage={setMessage} sendMessage={sendMessage} />
       </div>
     </div>

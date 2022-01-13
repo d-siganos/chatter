@@ -2,6 +2,7 @@ export { default as PrivateRoute } from './privateRoute';
 export { default as PublicRoute } from './publicRoute';
 export { default as Sidebar } from './sidebar';
 export { default as Messages } from './messages';
+export { default as SkeletonMessages} from './skeletonMessages';
 export { default as MessageInput } from './messageInput';
 export { default as Dashboard } from './dashboard';
 export { default as Home } from './home';

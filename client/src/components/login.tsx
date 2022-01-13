@@ -80,9 +80,9 @@ const Login = () => {
                 </g>
               </svg>
             </div>
-            <div className="w-full  max-w-md z-10">
-              <div className="sm:text-4xl xl:text-5xl font-bold leading-tight mb-6">Chatter</div>
-              <div className="sm:text-sm xl:text-md text-gray-200 font-normal">Encrypted chatting made easy</div>
+            <div className="w-full max-w-md z-10">
+              <div className="text-5xl sm:text-6xl font-medium mb-6">Chatter</div>
+              <div className="text-xl sm:text-2xl text-gray-200 font-normal">Encrypted chatting made easy</div>
             </div>
           </div>
           <div className="md:flex md:items-center md:justify-center w-full sm:w-auto md:h-full xl:w-2/5 p-8 md:p-10 lg:p-14 sm:rounded-lg md:rounded-none bg-white">
