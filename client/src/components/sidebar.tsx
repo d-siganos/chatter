@@ -1,7 +1,9 @@
 import React from 'react';
-import { IconType } from 'react-icons';
+import { useHistory } from 'react-router-dom';
+import { useAuth } from '../contexts/authContext';
+import { useChat } from '../contexts/chatContext';
 import { BiExit } from 'react-icons/bi';
-import { BsGearFill } from 'react-icons/bs';
+import { BsPlus } from 'react-icons/bs';
 
 const SidebarIcon = ({ icon }: { icon: React.ReactNode }) => {
   return (
@@ -11,10 +13,21 @@ const SidebarIcon = ({ icon }: { icon: React.ReactNode }) => {
   );
 }
 
-const Sidebar = ({ logout }: { logout: any }) => {
+const Sidebar = () => {
+  const history = useHistory();
+  const { signout } = useAuth();
+  const { setShowModal } = useChat();
+
+  const logOut = async () => {
+    console.log("lah");
+    await signout();
+    history.push("/");
+  }
+
   return (
     <div className="h-screen w-16 flex flex-col bg-white dark:bg-gray-900 shadow-lg transition duration-300">
-      <SidebarIcon icon={<BiExit size="22" onClick={logout} />} />
+      <SidebarIcon icon={<BiExit size="22" onClick={() => logOut()} />} />
+      <SidebarIcon icon={<BsPlus size="32" onClick={() => setShowModal(true)} />} />
     </div>
   );
 }

@@ -4,17 +4,20 @@ import './App.css';
 
 import { PrivateRoute, PublicRoute, Dashboard, Home, Login, Signup, PasswordReset } from './components';
 import { AuthProvider } from './contexts/authContext';
+import { ChatProvider } from './contexts/chatContext';
 
 const App = () => (
   <Router>
     <AuthProvider>
+      <ChatProvider>
       <Switch>
         <Route exact path='/' component={Home} />
-        <PrivateRoute path='/app' component={Dashboard} />
+        <PrivateRoute path='/app/:room?' component={Dashboard} />
         <PublicRoute path='/login' component={Login} />
         <PublicRoute path='/signup' component={Signup} />
         <PublicRoute path='/password-reset' component={PasswordReset} />
       </Switch>
+      </ChatProvider>
     </AuthProvider>
   </Router>
 );

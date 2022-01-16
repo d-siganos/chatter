@@ -1,6 +1,7 @@
 export { default as PrivateRoute } from './privateRoute';
 export { default as PublicRoute } from './publicRoute';
 export { default as Sidebar } from './sidebar';
+export { default as RoomCreation } from './roomCreation';
 export { default as Messages } from './messages';
 export { default as SkeletonMessages} from './skeletonMessages';
 export { default as MessageInput } from './messageInput';

@@ -1,11 +1,14 @@
 import React from 'react';
+import { useChat } from '../contexts/chatContext';
 
 import { HiOutlineMicrophone } from 'react-icons/hi';
 import { ImAttachment } from 'react-icons/im';
 import { IoImageOutline } from 'react-icons/io5';
 import { RiSendPlane2Fill } from 'react-icons/ri';
 
-const MessageInput = ({ message, setMessage, sendMessage }: { message:string, setMessage:any, sendMessage:any }) => {
+const MessageInput = ({ sendMessage }: { sendMessage:any }) => {
+  const { message, setMessage } = useChat();
+
   return (
     <div className="fixed inset-x-0 bottom-0 ml-16 pb-5 bg-gray-100 dark:bg-gray-800 transition duration-300">
       <div className="flex flex-row items-center px-6">

@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useHistory } from 'react-router-dom';
 import { io, Socket } from 'socket.io-client';
 import axios from 'axios';
+import { useParams } from 'react-router';
 import { useAuth } from '../contexts/authContext';
-import { Sidebar, Messages, MessageInput, SkeletonMessages } from '.';
+import { useChat } from '../contexts/chatContext';
 import useDarkMode from '../hooks/useDarkMode';
+import { Sidebar, RoomCreation, Messages, MessageInput, SkeletonMessages } from '.';
 
 import { FaMoon, FaSun } from 'react-icons/fa';
 
@@ -24,32 +25,24 @@ const ThemeIcon = () => {
 };
 
 const Dashboard = () => {
-  const ENDPOINT:string =  process.env.NODE_ENV === 'production' ? "https://chatter-js-app.herokuapp.com/" : "http://localhost:8080/";
-
-  const { signout, currentUser } = useAuth();
-  const [name, setName] = useState<string | null | undefined>('');
-  const [room, setRoom] = useState<string | null | undefined>('');
-  const [message, setMessage] = useState<string>('');
-  const [messages, setMessages] = useState<any>([]);
+  const { room = 'chat' }: { room: string } = useParams();
+  const { currentUser } = useAuth();
+  const { ENDPOINT, message, setMessage, setMessages, showModal } = useChat();
   const [loading, setLoading] = useState<boolean>(true);
-  const history = useHistory();
   const socket = useRef<Socket | null>(null);
+
+  const name = currentUser?.email;
 
   useEffect(() => {
     socket.current = io(ENDPOINT, { transports: ['websocket'], upgrade: false });
 
-    let name_ = currentUser?.email;
-    let room_ = 'chat';
-
-    setName(name_);
-    setRoom(room_);
     setLoading(true);
 
-    axios.get(`${ENDPOINT}messages/${room_}`).then(res => {
+    axios.get(`${ENDPOINT}/messages/${room}`).then(res => {
       setMessages(res.data);
       setLoading(false);
 
-      socket.current?.emit('join', { username: name_, room: room_ });
+      socket.current?.emit('join', { username: name, room });
 
       socket.current?.on('message', messageData => {
         setMessages((oldMessages: Array<any>) => [...oldMessages, messageData]);
@@ -60,12 +53,7 @@ const Dashboard = () => {
       socket.current?.off('message');
       socket.current?.disconnect();
     };
-  }, [ENDPOINT]);
-
-  const logout = () => {
-    signout();
-    history.push("/");
-  }
+  }, [ENDPOINT, room]);
 
   const sendMessage = async (event: React.KeyboardEvent<HTMLInputElement> | null) => {
     event?.preventDefault();
@@ -84,20 +72,23 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="h-screen w-full overflow-hidden flex">
-      <Sidebar logout={logout} />
-      <div className="w-full h-full overflow-auto bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200 transition duration-300">  
-        <div className="fixed inset-x-0 top-0 flex items-center justify-evenly ml-16 py-3 bg-gray-100 dark:bg-gray-800 bg-opacity-90 shadow-lg">
-          <span className="text-gray-800 dark:text-gray-200 text-lg font-semibold pl-6">{room}</span>
-          <ThemeIcon />
+    <>
+      {showModal ? <RoomCreation /> : null}
+      <div className="h-screen w-full overflow-hidden flex">
+        <Sidebar />
+        <div className="w-full h-full overflow-auto bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200 transition duration-300">  
+          <div className="fixed inset-x-0 top-0 flex items-center justify-evenly ml-16 py-3 bg-gray-100 dark:bg-gray-800 bg-opacity-90 shadow-lg">
+            <span className="text-gray-800 dark:text-gray-200 text-lg font-semibold pl-6">{room}</span>
+            <ThemeIcon />
+          </div>
+          {loading
+            ? <SkeletonMessages />
+            : <Messages name={name} />
+          }
+          <MessageInput sendMessage={sendMessage} />
         </div>
-        {loading
-          ? <SkeletonMessages />
-          : <Messages messages={messages} name={name} />
-        }
-        <MessageInput message={message} setMessage={setMessage} sendMessage={sendMessage} />
       </div>
-    </div>
+    </>
   );
 }
 
