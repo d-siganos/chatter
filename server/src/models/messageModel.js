@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-const messageSchema = new mongoose.Schema({
+const messageSchema = Schema({
   room: String,
   user: String,
   message: String,
@@ -9,9 +10,5 @@ const messageSchema = new mongoose.Schema({
 
 let Message = mongoose.model('Message', messageSchema);
 
-// TESTING PURPOSES
-// Message.deleteMany({}).then(function(){
-//   console.log("Data deleted");
-// });
-
-module.exports = Message;
+exports.messageSchema = messageSchema;
+exports.Message = Message;

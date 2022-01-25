@@ -11,8 +11,7 @@ const app = express();
 app.use(cors())
 app.use(bodyParser.json());
 
-require('./routes/messageRoutes')(app);
-require('./routes/userRoutes')(app);
+require('./routes/roomRoutes')(app);
 
 const server = http.createServer(app);
 
@@ -25,12 +24,13 @@ const io = socket(server, {
 io.on('connection', socket => {
   console.log('Connection established');
 
-  socket.on('join', ({ username, room }) => {
-    userJoin(socket, io, username, room);
+  socket.on('join', async ({ username, room }, callback) => {
+    await userJoin(socket, io, username, room);
+    callback();
   });
 
-  socket.on('sendMessage', messageData => {
-    sendMessage(socket, messageData);
+  socket.on('sendMessage', ({ room, messageData }) => {
+    sendMessage(socket, room, messageData);
   });
 
   socket.on('disconnect', () => {

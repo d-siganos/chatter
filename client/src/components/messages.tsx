@@ -9,7 +9,7 @@ const Messages = ({ name }: { name: string | null | undefined }) => {
     <ScrollableFeed className="py-16 px-6">
       {messages.map((message: string, i: number) => (
         <div key={i}>
-          <Message data={message} name={name} />
+          <Message lastMessages={[message, messages[i - 1]]} name={name} />
         </div>
       ))}
     </ScrollableFeed>

@@ -38,15 +38,17 @@ const Dashboard = () => {
 
     setLoading(true);
 
-    axios.get(`${ENDPOINT}/messages/${room}`).then(res => {
+    const getPreviousMessages = async () => {
+      const res = await axios.get(`${ENDPOINT}/room/${room}/messages`);
+
       setMessages(res.data);
       setLoading(false);
+    }
 
-      socket.current?.emit('join', { username: name, room });
+    socket.current?.emit('join', { username: name, room }, getPreviousMessages);
 
-      socket.current?.on('message', messageData => {
-        setMessages((oldMessages: Array<any>) => [...oldMessages, messageData]);
-      });
+    socket.current?.on('message', messageData => {
+      setMessages((oldMessages: Array<any>) => [...oldMessages, messageData]);
     });
     
     return () => {
@@ -66,7 +68,7 @@ const Dashboard = () => {
         date: new Date().getTime(),
       };
 
-      await socket.current?.emit('sendMessage', messageData);
+      await socket.current?.emit('sendMessage', { room, messageData });
       setMessage('');
     }
   };

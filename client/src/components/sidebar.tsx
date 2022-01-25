@@ -19,7 +19,6 @@ const Sidebar = () => {
   const { setShowModal } = useChat();
 
   const logOut = async () => {
-    console.log("lah");
     await signout();
     history.push("/");
   }

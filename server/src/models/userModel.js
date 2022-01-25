@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-const userSchema = new mongoose.Schema({
+const userSchema = new Schema({
   username: String,
-  room: String,
 });
 
 let User = mongoose.model('User', userSchema);
@@ -12,4 +12,5 @@ let User = mongoose.model('User', userSchema);
 //   console.log("Data deleted");
 // });
 
-module.exports = User;
+exports.userSchema = userSchema;
+exports.User = User;
