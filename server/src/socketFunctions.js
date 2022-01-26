@@ -4,9 +4,6 @@ const User = require('./models/userModel');
 
 const sendMessage = async (io, roomName, messageData) => {
   io.emit('message', messageData);
-
-    // let msg = new Message(messageData);
-    // Room.updateOne({ name: room }, { $push: { messages: messageData } });
     
   const room = await Room.findOne({ name: roomName });
   room.messages.push(messageData);
@@ -16,10 +13,13 @@ const sendMessage = async (io, roomName, messageData) => {
 }
 
 const createRoom = async roomName => {
+  const key = Math.random().toString(16).slice(2);
+
   const room = Room({
     name: roomName,
     users: [],
     messages: [],
+    key,
   });
   
   await room.save();
@@ -36,21 +36,23 @@ exports.userJoin = async (socket, io, username, roomName) => {
     room = await createRoom(roomName);
   }
 
-  if (room.users.some(user => user.username === username)) return;
+  if (!room.users.some(user => user.username === username)) {
+    room.users.push({ username });
+    room.save();
 
-  room.users.push({ username });
-  room.save();
+    const messageData = {
+      room: roomName,
+      user: 'Admin',
+      message: `A wild ${username} appeared!`,
+      date: new Date().getTime(),
+    };
 
-  const messageData = {
-    room: roomName,
-    user: 'Admin',
-    message: `A wild ${username} appeared!`,
-    date: new Date().getTime(),
-  };
+    console.log('New user joined');
+      
+    await sendMessage(io, roomName, messageData);
+  }
 
-  console.log('New user joined');
-    
-  await sendMessage(io, roomName, messageData);
+  return room.key;
 }
 
 exports.sendMessage = sendMessage;

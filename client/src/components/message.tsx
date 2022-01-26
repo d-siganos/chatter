@@ -1,6 +1,7 @@
 import React from 'react';
+import { decrypt } from '../crypto';
 
-const Message = ({ lastMessages, name }: { lastMessages: any, name: string | null | undefined }) => {
+const Message = ({ lastMessages, name, encryptionKey }: { lastMessages: any, name: string | null | undefined, encryptionKey: string }) => {
   const message = lastMessages[0];
   const previousMessage = lastMessages[1];
 
@@ -18,7 +19,7 @@ const Message = ({ lastMessages, name }: { lastMessages: any, name: string | nul
         <img className={`h-12 w-12 ${hideAvatar ? "invisible" : ""}`} src={`https://avatars.dicebear.com/api/gridy/${message?.user}.svg`} alt={message?.user} />
         <div className={`px-4 pb-4 pt-2 max-w-xl text-gray-300 ${message?.user === name ? "bg-purple-700 mr-3 rounded-l-3xl rounded-br-3xl" : "bg-gray-700 ml-3 rounded-r-3xl rounded-bl-3xl"}`}>
           <span className="text-xs block">{message?.user}</span>
-          <span className="text-sm pr-1 break-words">{message?.message}</span>
+          <span className="text-sm pr-1 break-words">{decrypt(message?.message, encryptionKey)}</span>
           <span className="text-xs text-gray-400">{dateToShow}</span>
         </div>
       </div>

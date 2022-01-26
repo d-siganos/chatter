@@ -8,6 +8,7 @@ const roomSchema = new Schema({
   name: { type: String, unique: true },
   users: [userSchema],
   messages: [messageSchema],
+  key: String,
 });
 
 let Room = mongoose.model('Room', roomSchema);

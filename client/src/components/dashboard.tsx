@@ -5,6 +5,7 @@ import { useParams } from 'react-router';
 import { useAuth } from '../contexts/authContext';
 import { useChat } from '../contexts/chatContext';
 import useDarkMode from '../hooks/useDarkMode';
+import { encrypt } from '../crypto';
 import { Sidebar, RoomCreation, Messages, MessageInput, SkeletonMessages } from '.';
 
 import { FaMoon, FaSun } from 'react-icons/fa';
@@ -32,13 +33,15 @@ const Dashboard = () => {
   const socket = useRef<Socket | null>(null);
 
   const name = currentUser?.email;
+  let encryptionKey: string = '';
 
   useEffect(() => {
-    socket.current = io(ENDPOINT, { transports: ['websocket'], upgrade: false });
+    socket.current = io(ENDPOINT, { transports: ['websocket'], secure: true, upgrade: false });
 
     setLoading(true);
 
-    const getPreviousMessages = async () => {
+    const getPreviousMessages = async (key: string) => {
+      encryptionKey = key;
       const res = await axios.get(`${ENDPOINT}/room/${room}/messages`);
 
       setMessages(res.data);
@@ -64,7 +67,7 @@ const Dashboard = () => {
       const messageData = {
         room: room,
         user: name,
-        message: message,
+        message: encrypt(message, encryptionKey),
         date: new Date().getTime(),
       };
 
@@ -85,7 +88,7 @@ const Dashboard = () => {
           </div>
           {loading
             ? <SkeletonMessages />
-            : <Messages name={name} />
+            : <Messages name={name} encryptionKey={encryptionKey} />
           }
           <MessageInput sendMessage={sendMessage} />
         </div>

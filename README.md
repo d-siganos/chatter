@@ -24,11 +24,19 @@ Chatter is a web chat app, made for educational purposes.
 > npm start
 ```
 
-### Building the front-end
+### Deploying the front-end
 
 ```bash
 > cd client
 > npm run build
+> netlify deploy
+```
+
+### Dockerising/Deploying the back-end
+
+```bash
+> docker build .
+> heroku container:push web
 ```
 
 ## Contributing

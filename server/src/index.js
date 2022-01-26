@@ -25,8 +25,8 @@ io.on('connection', socket => {
   console.log('Connection established');
 
   socket.on('join', async ({ username, room }, callback) => {
-    await userJoin(socket, io, username, room);
-    callback();
+    const key = await userJoin(socket, io, username, room);
+    callback(key);
   });
 
   socket.on('sendMessage', ({ room, messageData }) => {
