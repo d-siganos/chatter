@@ -1,22 +1,48 @@
-import React from 'react';
-import { useHistory } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { useHistory, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/authContext';
 import { useChat } from '../contexts/chatContext';
 import { BiExit } from 'react-icons/bi';
 import { BsPlus } from 'react-icons/bs';
 
-const SidebarIcon = ({ icon }: { icon: React.ReactNode }) => {
+const SidebarIcon = ({ icon }: { icon: React.ReactNode }) => (
+  <div className="relative flex items-center justify-center h-12 w-12 my-2 rounded-full mx-auto bg-gray-300 hover:bg-green-600 dark:bg-gray-800 text-green-500 hover:text-white hover:rounded-2xl transition-all duration-300 ease-linear cursor-pointer shadow-lg">
+    {icon}
+  </div>
+);
+
+const RoomIcon = ({ room, currentRoom }: { room: any, currentRoom: string }) => {
+  const handleRightClick = (event: React.MouseEvent<any>) => {
+    event.preventDefault();
+
+    // TODO: Display custom menu
+    console.log(event.clientX, event.clientY);
+  }
+
   return (
-    <div className="relative flex items-center justify-center h-12 w-12 mt-2 mb-2 rounded-full mx-auto bg-gray-300 hover:bg-green-600 dark:bg-gray-800 text-green-500 hover:text-white hover:rounded-2xl transition-all duration-300 ease-linear cursor-pointer shadow-lg">
-      {icon}
-    </div>
-  );
+    <Link to={`/app/${room.name}`} onContextMenu={handleRightClick} className="mx-auto my-2 h-12 w-12">
+      <img
+        className={`${room.name === currentRoom ? "rounded-2xl" : "rounded-full"} hover:rounded-2xl transition-all duration-300 ease-linear cursor-pointer shadow-lg`}
+        src={`https://avatars.dicebear.com/api/initials/${room.name}.svg`} />
+    </Link>
+  )
 }
 
-const Sidebar = () => {
+const Sidebar = ({ username, currentRoom }: { username: string | null | undefined, currentRoom: string }) => {
   const history = useHistory();
   const { signout } = useAuth();
-  const { setShowModal } = useChat();
+  const { ENDPOINT, setShowModal } = useChat();
+  const [rooms, setRooms] = useState<Array<any>>([]);
+
+  useEffect(() => {
+    const getRooms = async (user: string | null | undefined) => {
+      const res = await axios.get(`${ENDPOINT}/users/${user}/rooms`);
+      setRooms(res.data);
+    }
+
+    getRooms(username);
+  }, []);
 
   const logOut = async () => {
     await signout();
@@ -26,6 +52,9 @@ const Sidebar = () => {
   return (
     <div className="h-screen w-16 flex flex-col bg-white dark:bg-gray-900 shadow-lg transition duration-300">
       <SidebarIcon icon={<BiExit size="22" onClick={() => logOut()} />} />
+      {rooms.map((room, i) => (
+        <RoomIcon key={i} room={room} currentRoom={currentRoom} />
+      ))}
       <SidebarIcon icon={<BsPlus size="32" onClick={() => setShowModal(true)} />} />
     </div>
   );

@@ -12,6 +12,7 @@ app.use(cors())
 app.use(bodyParser.json());
 
 require('./routes/roomRoutes')(app);
+require('./routes/userRoutes')(app);
 
 const server = http.createServer(app);
 

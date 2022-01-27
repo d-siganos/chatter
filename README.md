@@ -20,7 +20,7 @@ Chatter is a web chat app, made for educational purposes.
 ```bash
 > cd server
 > npm start
-> cd client
+> cd ../client
 > npm start
 ```
 

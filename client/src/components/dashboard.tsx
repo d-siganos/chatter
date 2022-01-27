@@ -26,16 +26,18 @@ const ThemeIcon = () => {
 };
 
 const Dashboard = () => {
-  const { room = 'chat' }: { room: string } = useParams();
+  const { room = '' }: { room: string } = useParams();
   const { currentUser } = useAuth();
   const { ENDPOINT, message, setMessage, setMessages, showModal } = useChat();
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const socket = useRef<Socket | null>(null);
 
   const name = currentUser?.email;
   let encryptionKey: string = '';
 
   useEffect(() => {
+    if (!room) return;
+
     socket.current = io(ENDPOINT, { transports: ['websocket'], secure: true, upgrade: false });
 
     setLoading(true);
@@ -80,17 +82,26 @@ const Dashboard = () => {
     <>
       {showModal ? <RoomCreation /> : null}
       <div className="h-screen w-full overflow-hidden flex">
-        <Sidebar />
+        <Sidebar username={name} currentRoom={room} />
         <div className="w-full h-full overflow-auto bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200 transition duration-300">  
           <div className="fixed inset-x-0 top-0 flex items-center justify-evenly ml-16 py-3 bg-gray-100 dark:bg-gray-800 bg-opacity-90 shadow-lg">
             <span className="text-gray-800 dark:text-gray-200 text-lg font-semibold pl-6">{room}</span>
             <ThemeIcon />
           </div>
+          {!room
+            ? <div className="w-full h-full flex items-center justify-center">
+                <div>
+                  <h1 className="text-3xl sm:text-4xl font-bold text-center">Welcome</h1>
+                  <h2 className="text-xl sm:text-2xl font-normal text-center">Join a room, or create your own</h2>
+                </div>
+              </div>
+            : null
+          }
           {loading
             ? <SkeletonMessages />
             : <Messages name={name} encryptionKey={encryptionKey} />
           }
-          <MessageInput sendMessage={sendMessage} />
+          {room ? <MessageInput sendMessage={sendMessage} /> : null}
         </div>
       </div>
     </>

@@ -33,7 +33,7 @@ const Home = () => {
           <div className="bg-white rounded-xl p-4">
             <MdPrivacyTip className="text-indigo-500 text-4xl sm:text-6xl mx-auto" />
             <h2 className="text-indigo-500 text-2xl sm:text-3xl font-bold pb-8 text-center">Privacy</h2>
-            <p className="text-center">We do not track personal data of any form. We only keep the necessary information about you; your e-mail address and your messages.</p>
+            <p className="text-center">We do not track personal data of any form. We only keep the necessary information about you; your e-mail address and your messages in encrypted form.</p>
           </div>
           <div className="bg-white rounded-xl p-4">
             <RiOpenSourceFill className="text-blue-500 text-4xl sm:text-6xl mx-auto" />
@@ -43,7 +43,7 @@ const Home = () => {
           <div className="bg-white rounded-xl p-4">
             <BsPhoneFill className="text-blue-600 text-4xl sm:text-6xl mx-auto" />
             <h2 className="text-blue-600 text-2xl sm:text-3xl font-bold pb-8 text-center">Accessible</h2>
-            <p className="text-center">Although Chatter is designed for PC users, it is completely mobile-friendly and can be accessed easily on any device.</p>
+            <p className="text-center">Although Chatter is designed for PC users, the interface is completely mobile-friendly and can be accessed easily on any device.</p>
           </div>
         </div>
       </div>
