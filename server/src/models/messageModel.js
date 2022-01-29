@@ -1,9 +1,11 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+const { userSchema } = require('./userModel');
+
 const messageSchema = Schema({
   room: String,
-  user: String,
+  user: userSchema,
   message: String,
   date: Number
 });

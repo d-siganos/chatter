@@ -32,7 +32,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const socket = useRef<Socket | null>(null);
 
-  const name = currentUser?.email;
+  const user = { username: currentUser?.email, nickname: currentUser?.email?.replace(/@[^@]+$/, ''), avatarLink: currentUser?.photoURL };
   let encryptionKey: string = '';
 
   useEffect(() => {
@@ -50,7 +50,17 @@ const Dashboard = () => {
       setLoading(false);
     }
 
-    socket.current?.emit('join', { username: name, room }, getPreviousMessages);
+    const postUser = async () => {
+      await axios.post(`${ENDPOINT}/users/`, {
+        username: currentUser?.email,
+        nickname: currentUser?.email?.replace(/@[^@]+$/, ''),
+        avatarLink: currentUser?.photoURL
+      });
+
+      socket.current?.emit('join', { user, room }, getPreviousMessages);
+    }
+    
+    postUser();
 
     socket.current?.on('message', messageData => {
       setMessages((oldMessages: Array<any>) => [...oldMessages, messageData]);
@@ -67,8 +77,8 @@ const Dashboard = () => {
 
     if (message && !loading) {
       const messageData = {
-        room: room,
-        user: name,
+        room,
+        user,
         message: encrypt(message, encryptionKey),
         date: new Date().getTime(),
       };
@@ -82,7 +92,7 @@ const Dashboard = () => {
     <>
       {showModal ? <RoomCreation /> : null}
       <div className="h-screen w-full overflow-hidden flex">
-        <Sidebar username={name} currentRoom={room} />
+        <Sidebar user={user} currentRoom={room} loading={loading} />
         <div className="w-full h-full overflow-auto bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200 transition duration-300">  
           <div className="fixed inset-x-0 top-0 flex items-center justify-evenly ml-16 py-3 bg-gray-100 dark:bg-gray-800 bg-opacity-90 shadow-lg">
             <span className="text-gray-800 dark:text-gray-200 text-lg font-semibold pl-6">{room}</span>
@@ -99,7 +109,7 @@ const Dashboard = () => {
           }
           {loading
             ? <SkeletonMessages />
-            : <Messages name={name} encryptionKey={encryptionKey} />
+            : <Messages user={user} encryptionKey={encryptionKey} />
           }
           {room ? <MessageInput sendMessage={sendMessage} /> : null}
         </div>

@@ -21,15 +21,15 @@ const RoomIcon = ({ room, currentRoom }: { room: any, currentRoom: string }) => 
   }
 
   return (
-    <Link to={`/app/${room.name}`} onContextMenu={handleRightClick} className="mx-auto my-2 h-12 w-12">
+    <Link to={`/app/${room?.name}`} onContextMenu={handleRightClick} className="mx-auto my-2 h-12 w-12">
       <img
-        className={`${room.name === currentRoom ? "rounded-2xl" : "rounded-full"} hover:rounded-2xl transition-all duration-300 ease-linear cursor-pointer shadow-lg`}
-        src={`https://avatars.dicebear.com/api/initials/${room.name}.svg`} />
+        className={`${room?.name === currentRoom ? "rounded-2xl" : "rounded-full"} hover:rounded-2xl transition-all duration-300 ease-linear cursor-pointer shadow-lg`}
+        src={room?.avatarLink} />
     </Link>
   )
 }
 
-const Sidebar = ({ username, currentRoom }: { username: string | null | undefined, currentRoom: string }) => {
+const Sidebar = ({ user, currentRoom, loading }: { user: any, currentRoom: string, loading: boolean }) => {
   const history = useHistory();
   const { signout } = useAuth();
   const { ENDPOINT, setShowModal } = useChat();
@@ -41,8 +41,8 @@ const Sidebar = ({ username, currentRoom }: { username: string | null | undefine
       setRooms(res.data);
     }
 
-    getRooms(username);
-  }, []);
+    getRooms(user?.username);
+  }, [loading]);
 
   const logOut = async () => {
     await signout();

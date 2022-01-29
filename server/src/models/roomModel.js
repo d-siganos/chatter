@@ -6,6 +6,7 @@ const { userSchema } = require('./userModel');
 
 const roomSchema = new Schema({
   name: { type: String, unique: true },
+  avatarLink: String,
   users: [userSchema],
   messages: [messageSchema],
   key: String,

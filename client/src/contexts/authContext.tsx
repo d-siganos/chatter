@@ -33,7 +33,7 @@ export const AuthProvider: React.FC = ({ children }) => {
   }
 
   const login = (email: string, password:string) => {
-    return signInWithEmailAndPassword(auth, email, password)
+    return signInWithEmailAndPassword(auth, email, password);
   }
 
   const signout = () => {

@@ -8,7 +8,8 @@ const { sendMessage, userJoin } = require('./socketFunctions');
 const PORT = process.env.PORT || 8080;
 
 const app = express();
-app.use(cors())
+app.use(cors());
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 require('./routes/roomRoutes')(app);
@@ -25,8 +26,8 @@ const io = socket(server, {
 io.on('connection', socket => {
   console.log('Connection established');
 
-  socket.on('join', async ({ username, room }, callback) => {
-    const key = await userJoin(socket, io, username, room);
+  socket.on('join', async ({ user, room }, callback) => {
+    const key = await userJoin(socket, io, user, room);
     callback(key);
   });
 

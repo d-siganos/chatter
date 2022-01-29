@@ -1,12 +1,16 @@
-const Message = require('./models/messageModel');
 const Room = require('./models/roomModel');
-const User = require('./models/userModel');
+const { Message } = require('./models/messageModel');
+const { User } = require('./models/userModel');
+
+const adminUser = { username: 'Admin', nickname: 'Admin', avatarLink: 'https://avatars.dicebear.com/api/gridy/Admin.svg' };
 
 const sendMessage = async (io, roomName, messageData) => {
   io.emit('message', messageData);
+
+  const message = Message(messageData);
     
   const room = await Room.findOne({ name: roomName });
-  room.messages.push(messageData);
+  room.messages.push(message);
   room.save();
 
   console.log('Message sent');
@@ -17,6 +21,7 @@ const createRoom = async roomName => {
 
   const room = Room({
     name: roomName,
+    avatarLink: `https://avatars.dicebear.com/api/initials/${roomName}.svg`,
     users: [],
     messages: [],
     key,
@@ -27,7 +32,7 @@ const createRoom = async roomName => {
   return room;
 }
 
-exports.userJoin = async (socket, io, username, roomName) => {
+exports.userJoin = async (socket, io, user, roomName) => {
   socket.join(roomName);
 
   let room = await Room.findOne({ name: roomName });
@@ -36,14 +41,21 @@ exports.userJoin = async (socket, io, username, roomName) => {
     room = await createRoom(roomName);
   }
 
-  if (!room.users.some(user => user.username === username)) {
-    room.users.push({ username });
+  if (!room.users.some(user_ => user_.username === user.username)) {
+    let newUser = await User.findOne({ "username": user.username });
+    
+    // if (!newUser) {
+    //   newUser = User(user);
+    //   await newUser.save();
+    // }
+    
+    room.users.push(newUser);
     room.save();
 
     const messageData = {
       room: roomName,
-      user: 'Admin',
-      message: `A wild ${username} appeared!`,
+      user: adminUser,
+      message: `A wild ${user.nickname} appeared!`,
       date: new Date().getTime(),
     };
 
