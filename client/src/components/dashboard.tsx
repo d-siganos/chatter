@@ -32,7 +32,8 @@ const Dashboard = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const socket = useRef<Socket | null>(null);
 
-  const user = { username: currentUser?.email, nickname: currentUser?.email?.replace(/@[^@]+$/, ''), avatarLink: currentUser?.photoURL };
+  let user = useRef<object>({});
+
   let encryptionKey: string = '';
 
   useEffect(() => {
@@ -51,21 +52,23 @@ const Dashboard = () => {
     }
 
     const postUser = async () => {
-      await axios.post(`${ENDPOINT}/users/`, {
+      const res = await axios.post(`${ENDPOINT}/users/`, {
         username: currentUser?.email,
         nickname: currentUser?.email?.replace(/@[^@]+$/, ''),
         avatarLink: currentUser?.photoURL
       });
 
-      socket.current?.emit('join', { user, room }, getPreviousMessages);
+      user.current = res.data.user;
+
+      socket.current?.emit('join', { user: user.current, room }, getPreviousMessages);
     }
     
     postUser();
-
+    
     socket.current?.on('message', messageData => {
       setMessages((oldMessages: Array<any>) => [...oldMessages, messageData]);
     });
-    
+
     return () => {
       socket.current?.off('message');
       socket.current?.disconnect();
@@ -78,7 +81,7 @@ const Dashboard = () => {
     if (message && !loading) {
       const messageData = {
         room,
-        user,
+        user: user.current,
         message: encrypt(message, encryptionKey),
         date: new Date().getTime(),
       };
@@ -109,7 +112,7 @@ const Dashboard = () => {
           }
           {loading
             ? <SkeletonMessages />
-            : <Messages user={user} encryptionKey={encryptionKey} />
+            : <Messages user={user.current} encryptionKey={encryptionKey} />
           }
           {room ? <MessageInput sendMessage={sendMessage} /> : null}
         </div>

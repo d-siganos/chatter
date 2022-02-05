@@ -43,7 +43,7 @@ const Home = () => {
           <div className="bg-white rounded-xl p-4">
             <BsPhoneFill className="text-blue-600 text-4xl sm:text-6xl mx-auto" />
             <h2 className="text-blue-600 text-2xl sm:text-3xl font-bold pb-8 text-center">Accessible</h2>
-            <p className="text-center">Although Chatter is designed for PC users, the interface is completely mobile-friendly and can be accessed easily on any device.</p>
+            <p className="text-center">Although Chatter is tailored to PC users, the interface is completely mobile-friendly and can be accessed easily on any device.</p>
           </div>
         </div>
       </div>

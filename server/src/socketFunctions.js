@@ -42,13 +42,7 @@ exports.userJoin = async (socket, io, user, roomName) => {
   }
 
   if (!room.users.some(user_ => user_.username === user.username)) {
-    let newUser = await User.findOne({ "username": user.username });
-    
-    // if (!newUser) {
-    //   newUser = User(user);
-    //   await newUser.save();
-    // }
-    
+    let newUser = await User.findOne({ "username": user.username });    
     room.users.push(newUser);
     room.save();
 

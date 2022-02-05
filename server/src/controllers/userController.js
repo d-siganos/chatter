@@ -14,21 +14,17 @@ exports.createUser = async (req, res) => {
     const exists = await User.findOne({ "username": req.body.username });
 
     if (exists) {
-      res.send({
-        message: `User already exists`
-      });
-
+      res.send({ user: exists });
       return;
     }
 
-    const nickname = req.body.nickname || req.params.username.replace(/@[^@]+$/);
-    const avatarLink = req.body.avatarLink || `https://avatars.dicebear.com/api/gridy/${req.params.name}.svg`;
+    const nickname = req.body.nickname || req.body.username.replace(/@[^@]+$/);
+    const avatarLink = req.body.avatarLink || `https://avatars.dicebear.com/api/gridy/${req.body.username}.svg`;
 
-    User.create({ "username": req.body.username, "nickname": nickname, "avatarLink": avatarLink });
+    const user = new User({ "username": req.body.username, "nickname": nickname, "avatarLink": avatarLink });
+    user.save();
 
-    res.send({
-      message: `User registered`
-    });
+    res.send({ user });
   } catch (error) {
     console.log(error);
 

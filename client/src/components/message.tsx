@@ -18,7 +18,7 @@ const Message = ({ lastMessages, user, encryptionKey }: { lastMessages: any, use
   return (
     <>
       <div className={`w-full flex ${message?.user.username === user.username ? "flex-row-reverse" : ""} ${hideAvatar ? "mt-1" : "mt-3"}`}>
-        <img className={`h-12 w-12 ${hideAvatar ? "invisible" : ""}`} src={message?.user.avatarLink} alt={message?.user.username} referrerPolicy="no-referrer"></img>
+        <img className={`h-12 w-12 ${hideAvatar ? "invisible" : ""}`} src={message?.user.avatarLink} alt={message?.user.nickname} referrerPolicy="no-referrer"></img>
         <div className={`px-4 pb-4 pt-2 max-w-xl text-gray-300 ${message?.user.username === user.username ? "bg-purple-700 mr-3 rounded-l-3xl rounded-br-3xl" : "bg-gray-700 ml-3 rounded-r-3xl rounded-bl-3xl"}`}>
           <span className="text-xs block">{message?.user.nickname}</span>
           <ReactMarkdown remarkPlugins={[[remarkGfm, {singleTilde: false}]]}

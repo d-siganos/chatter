@@ -28,11 +28,11 @@ io.on('connection', socket => {
 
   socket.on('join', async ({ user, room }, callback) => {
     const key = await userJoin(socket, io, user, room);
-    callback(key);
+    if (callback) callback(key);
   });
 
   socket.on('sendMessage', ({ room, messageData }) => {
-    sendMessage(socket, room, messageData);
+    sendMessage(io, room, messageData);
   });
 
   socket.on('disconnect', () => {

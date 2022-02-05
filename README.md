@@ -35,6 +35,7 @@ Chatter is a web chat app, made for educational purposes.
 ### Dockerising/Deploying the back-end
 
 ```bash
+> cd server
 > docker build .
 > heroku container:push web
 ```
