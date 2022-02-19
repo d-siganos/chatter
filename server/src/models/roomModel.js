@@ -1,14 +1,16 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-
-const { messageSchema } = require('./messageModel');
-const { userSchema } = require('./userModel');
+const ObjectID = Schema.Types.ObjectId;
 
 const roomSchema = new Schema({
   name: { type: String, unique: true },
   avatarLink: String,
-  users: [userSchema],
-  messages: [messageSchema],
+  users: [
+    { type: ObjectID, ref: "User" }
+  ],
+  messages: [
+    { type: ObjectID, ref: "Message" }
+  ],
   key: String,
 });
 

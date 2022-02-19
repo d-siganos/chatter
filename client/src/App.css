@@ -3,3 +3,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.rightMessage {
+  @apply mr-3 rounded-l-3xl rounded-br-3xl;
+}
+
+.leftMessage {
+  @apply ml-3 rounded-r-3xl rounded-bl-3xl;
+}
+
+.highlightedMessage {
+  @apply bg-emerald-600 shadow-md shadow-emerald-600/60;
+}

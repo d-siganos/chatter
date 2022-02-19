@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useHistory, useParams } from 'react-router-dom';
 import { io, Socket } from 'socket.io-client';
 import axios from 'axios';
-import { useParams } from 'react-router';
 import { useAuth } from '../contexts/authContext';
 import { useChat } from '../contexts/chatContext';
 import useDarkMode from '../hooks/useDarkMode';
@@ -26,11 +26,13 @@ const ThemeIcon = () => {
 };
 
 const Dashboard = () => {
-  const { room = '' }: { room: string } = useParams();
+  let { room = '', messageId = '' }: { room: string, messageId: string } = useParams();
   const { currentUser } = useAuth();
   const { ENDPOINT, message, setMessage, setMessages, showModal } = useChat();
   const [loading, setLoading] = useState<boolean>(false);
   const socket = useRef<Socket | null>(null);
+
+  const history = useHistory();
 
   let user = useRef<object>({});
 
@@ -88,6 +90,8 @@ const Dashboard = () => {
 
       await socket.current?.emit('sendMessage', { room, messageData });
       setMessage('');
+
+      history.push(`/app/${room}`);
     }
   };
 
@@ -96,7 +100,7 @@ const Dashboard = () => {
       {showModal ? <RoomCreation /> : null}
       <div className="h-screen w-full overflow-hidden flex">
         <Sidebar user={user} currentRoom={room} loading={loading} />
-        <div className="w-full h-full overflow-auto bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200 transition duration-300">  
+        <div className="w-full h-full overflow-auto bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200 transition duration-300">
           <div className="fixed inset-x-0 top-0 flex items-center justify-evenly ml-16 py-3 bg-gray-100 dark:bg-gray-800 bg-opacity-90 shadow-lg">
             <span className="text-gray-800 dark:text-gray-200 text-lg font-semibold pl-6">{room}</span>
             <ThemeIcon />
@@ -110,9 +114,11 @@ const Dashboard = () => {
               </div>
             : null
           }
-          {loading
-            ? <SkeletonMessages />
-            : <Messages user={user.current} encryptionKey={encryptionKey} />
+          {room ?
+            (loading ?
+              <SkeletonMessages /> :
+              <Messages user={user.current} messageId={messageId} encryptionKey={encryptionKey} /> )
+            : null
           }
           {room ? <MessageInput sendMessage={sendMessage} /> : null}
         </div>

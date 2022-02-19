@@ -2,12 +2,15 @@ import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { decrypt } from '../crypto';
+import ScrollToBottomDiv from './scrollToBottom';
 
-const Message = ({ lastMessages, user, encryptionKey }: { lastMessages: any, user: any, encryptionKey: string }) => {
+const Message = ({ lastMessages, messageId, user, encryptionKey }: { lastMessages: any, messageId: string, user: any, encryptionKey: string }) => {
   const message = lastMessages[0];
   const previousMessage = lastMessages[1];
 
   let hideAvatar = message?.user.username === previousMessage?.user.username;
+  let isFromMe = message?.user.username === user.username;
+  let isHighlighted = messageId === message?._id;
 
   let date = new Date();
   const dateString = date.toLocaleDateString();
@@ -17,9 +20,10 @@ const Message = ({ lastMessages, user, encryptionKey }: { lastMessages: any, use
 
   return (
     <>
-      <div className={`w-full flex ${message?.user.username === user.username ? "flex-row-reverse" : ""} ${hideAvatar ? "mt-1" : "mt-3"}`}>
+      { isHighlighted  ? <ScrollToBottomDiv /> : null }
+      <div id={message?._id} className={`w-full flex ${message?.user.username === user.username ? "flex-row-reverse" : ""} ${hideAvatar ? "mt-1" : "mt-3"}`}>
         <img className={`h-12 w-12 ${hideAvatar ? "invisible" : ""}`} src={message?.user.avatarLink} alt={message?.user.nickname} referrerPolicy="no-referrer"></img>
-        <div className={`px-4 pb-4 pt-2 max-w-xl text-gray-300 ${message?.user.username === user.username ? "bg-purple-700 mr-3 rounded-l-3xl rounded-br-3xl" : "bg-gray-700 ml-3 rounded-r-3xl rounded-bl-3xl"}`}>
+        <div className={`px-4 pb-4 pt-2 max-w-xl text-gray-300 ${isHighlighted ? "highlightedMessage" : (isFromMe? "bg-purple-700" : "bg-gray-700")} ${isFromMe ? "rightMessage" : "leftMessage"}`}>
           <span className="text-xs block">{message?.user.nickname}</span>
           <ReactMarkdown remarkPlugins={[[remarkGfm, {singleTilde: false}]]}
             components={{

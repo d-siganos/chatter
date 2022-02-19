@@ -8,9 +8,10 @@ const sendMessage = async (io, roomName, messageData) => {
   io.emit('message', messageData);
 
   const message = Message(messageData);
+  message.save();
     
   const room = await Room.findOne({ name: roomName });
-  room.messages.push(message);
+  room.messages.push(message.id);
   room.save();
 
   console.log('Message sent');
@@ -35,15 +36,16 @@ const createRoom = async roomName => {
 exports.userJoin = async (socket, io, user, roomName) => {
   socket.join(roomName);
 
-  let room = await Room.findOne({ name: roomName });
+  let room = await Room.findOne({ name: roomName }).populate("users");
 
   if (!room) {
     room = await createRoom(roomName);
   }
 
   if (!room.users.some(user_ => user_.username === user.username)) {
-    let newUser = await User.findOne({ "username": user.username });    
-    room.users.push(newUser);
+    let newUser = await User.findOne({ "username": user.username });   
+
+    room.users.push(newUser.id);
     room.save();
 
     const messageData = {

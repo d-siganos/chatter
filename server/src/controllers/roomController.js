@@ -10,7 +10,7 @@ exports.findAllMessages = async (req, res) => {
   }
 
   try {
-    const data = await Room.find({ name: req.params.name }, { messages: 1, _id: 0 }).sort({ _id: 1 }).limit(50);
+    const data = await Room.find({ name: req.params.name }, { messages: 1, _id: 0 }).populate("messages").sort({ _id: 1 }).limit(50);
     res.send(data[0].messages);
   } catch (error) {
     console.log(error);

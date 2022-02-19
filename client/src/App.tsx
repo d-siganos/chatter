@@ -12,7 +12,7 @@ const App = () => (
       <ChatProvider>
       <Switch>
         <Route exact path='/' component={Home} />
-        <PrivateRoute path='/app/:room?' component={Dashboard} />
+        <PrivateRoute path='/app/:room?/:messageId?' component={Dashboard} />
         <PublicRoute path='/login' component={Login} />
         <PublicRoute path='/signup' component={Signup} />
         <PublicRoute path='/password-reset' component={PasswordReset} />
