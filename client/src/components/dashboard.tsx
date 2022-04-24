@@ -9,6 +9,7 @@ import { encrypt } from '../crypto';
 import { Sidebar, RoomCreation, Messages, MessageInput, SkeletonMessages } from '.';
 
 import { FaMoon, FaSun } from 'react-icons/fa';
+import UploadImages from './uploadImages';
 
 const ThemeIcon = () => {
   const [darkTheme, setDarkTheme] = useDarkMode();
@@ -28,7 +29,7 @@ const ThemeIcon = () => {
 const Dashboard = () => {
   let { roomID = '', messageId = '' }: { roomID: string, messageId: string } = useParams();
   const { currentUser } = useAuth();
-  const { ENDPOINT, message, setMessage, setMessages, showModal } = useChat();
+  const { ENDPOINT, message, setMessage, setMessages, images, showModal } = useChat();
   const [loading, setLoading] = useState<boolean>(false);
   const [roomExists, setRoomExists] = useState<boolean>(true);
   const socket = useRef<Socket | null>(null);
@@ -41,27 +42,20 @@ const Dashboard = () => {
   let encryptionKey: string = '';
 
   useEffect(() => {
-    socket.current = io(ENDPOINT, { transports: ['websocket'], secure: true, upgrade: false });
-
-    if (!roomID) return;
-
-    setLoading(true);
-    setRoomExists(true);
-
     const getRoomData = async (key: string) => {
       encryptionKey = key;
 
       const roomRes = await axios.get(`${ENDPOINT}/room/${roomID}/info`);
-      room.current = roomRes.data;
-      console.log(roomID, roomRes.data)
 
-      const messageRes = await axios.get(`${ENDPOINT}/room/${roomID}/messages`);
-
-      if (messageRes.status === 204) {
+      if (roomRes.status === 204) {
         setRoomExists(false);
         setLoading(false);
         return;
       }
+
+      room.current = roomRes.data;
+
+      const messageRes = await axios.get(`${ENDPOINT}/room/${roomID}/messages`);
 
       setMessages(messageRes.data);
       setLoading(false);
@@ -77,14 +71,22 @@ const Dashboard = () => {
 
       user.current = res.data.user;
 
+      if (!roomID) return;
+
       socket.current?.emit('join', { user: user.current, roomID }, getRoomData);
     }
     
-    postUser();
-    
+    socket.current = io(ENDPOINT, { transports: ['websocket'], secure: true, upgrade: false });
     socket.current?.on('message', messageData => {
       setMessages((oldMessages: Array<any>) => [...oldMessages, messageData]);
     });
+
+    postUser();
+
+    if (!roomID) return;
+
+    setLoading(true);
+    setRoomExists(true);
 
     return () => {
       socket.current?.off('message');
@@ -97,6 +99,7 @@ const Dashboard = () => {
 
     if (message && !loading) {
       const messageData = {
+        type: 'text',
         room: roomID,
         user: user.current,
         message: encrypt(message, encryptionKey),
@@ -110,18 +113,30 @@ const Dashboard = () => {
     }
   };
 
+  const sendImage = async (base64: any) => {
+    const messageData = {
+      type: 'image',
+      room: roomID,
+      user: user.current,
+      message: base64,
+      date: new Date().getTime(),
+    };
+
+    socket.current?.emit('sendMessage', { roomID, messageData });
+  };
+
   const emitRoomCreation = async (roomName: string) => {
     await socket.current?.emit('createRoom', { roomName }, createRoomCallback);
   }
 
   const createRoomCallback = (roomData: any) => {
-    console.log(roomData);
     history.push(`/app/${roomData._id}`);
   }
 
   return (
     <>
       {showModal ? <RoomCreation nickname={user.current.nickname} emitRoomCreation={emitRoomCreation} /> : null}
+      {images.length > 0 ? <UploadImages sendImage={sendImage} /> : null}
       <div className="h-screen w-full overflow-hidden flex">
         <Sidebar user={currentUser} currentRoom={roomID} loading={loading} />
         <div className="w-full h-full overflow-auto bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200 transition duration-300">

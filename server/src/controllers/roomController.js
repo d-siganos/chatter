@@ -5,8 +5,15 @@ exports.findAllMessages = async (req, res) => {
   if (!req.params.roomID) {
     res.status(400).send({
       error: "400 Bad Request",
-      message: "Missing room name"
+      message: "Missing room ID"
     });
+
+    return;
+  }
+
+  if (!req.params.roomID.match(/^[0-9a-fA-F]{24}$/)) {
+    res.sendStatus(204);
+    return;
   }
 
   try {
@@ -32,8 +39,15 @@ exports.findAllUsers = async (req, res) => {
   if (!req.params.roomID) {
     res.status(400).send({
       error: "400 Bad Request",
-      message: "Missing room name"
+      message: "Missing room ID"
     });
+
+    return;
+  }
+
+  if (!req.params.roomID.match(/^[0-9a-fA-F]{24}$/)) {
+    res.sendStatus(204);
+    return;
   }
 
   try {
@@ -55,10 +69,23 @@ exports.findRoom = async (req, res) => {
       error: "400 Bad Request",
       message: "Missing room ID"
     });
+
+    return;
+  }
+
+  if (!req.params.roomID.match(/^[0-9a-fA-F]{24}$/)) {
+    res.sendStatus(204);
+    return;
   }
 
   try {
     const data = await Room.findById(req.params.roomID, { users: 0, messages: 0 });
+
+    if (!data) {
+      res.sendStatus(204);
+      return;
+    }
+
     res.send(data);
   } catch (error) {
     console.log(error);

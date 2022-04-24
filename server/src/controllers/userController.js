@@ -8,6 +8,8 @@ exports.createUser = async (req, res) => {
       error: "400 Bad Request",
       message: "Missing user ID or username"
     });
+
+    return;
   }
 
   try {
@@ -41,6 +43,8 @@ exports.findAllRooms = async (req, res) => {
       error: "400 Bad Request",
       message: "Missing user ID"
     });
+
+    return;
   }
 
   try {

@@ -7,7 +7,11 @@ import { IoImageOutline } from 'react-icons/io5';
 import { RiSendPlane2Fill } from 'react-icons/ri';
 
 const MessageInput = ({ sendMessage }: { sendMessage: any }) => {
-  const { message, setMessage } = useChat();
+  const { message, setMessage, setImages } = useChat();
+
+  const onImageChange = (e: any) => {
+    setImages([...e.target.files]);
+  }
 
   return (
     <div className="fixed inset-x-0 bottom-0 ml-16 pb-5 bg-gray-100 dark:bg-gray-800 transition duration-300">
@@ -24,9 +28,10 @@ const MessageInput = ({ sendMessage }: { sendMessage: any }) => {
             <button className="flex items-center justify-center h-10 w-8 text-gray-400">
               <ImAttachment className="w-5 h-5" />
             </button>
-            <button className="flex items-center justify-center h-10 w-8 text-gray-400 ml-1 mr-2">
+            <label className="flex items-center justify-center h-10 w-8 text-gray-400 ml-1 mr-2 cursor-pointer">
               <IoImageOutline className="w-5 h-5" />
-            </button>
+              <input type="file" className="hidden" multiple accept="image/*" onChange={onImageChange} />
+            </label>
           </div>
         </div>
         <div className="ml-3">

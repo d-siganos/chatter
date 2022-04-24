@@ -4,6 +4,7 @@ const Schema = mongoose.Schema;
 const { userSchema } = require('./userModel');
 
 const messageSchema = Schema({
+  type: String,
   room: String,
   user: userSchema,
   message: String,

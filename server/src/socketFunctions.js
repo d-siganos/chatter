@@ -35,12 +35,14 @@ exports.createRoom = async roomName => {
   return room;
 }
 
-exports.userJoin = async (socket, io, user, roomID) => {
-  socket.join(roomID);
+exports.userJoin = async (socket, io, user, roomID) => { 
+  if (!roomID.match(/^[0-9a-fA-F]{24}$/)) return;
 
   let room = await Room.findById(roomID).populate("users");
 
   if (!room) return;
+
+  socket.join(roomID);
 
   if (room.users.indexOf(user.userId) === -1) {
     let newUser = await User.findOne({ "username": user.username });   
@@ -48,10 +50,14 @@ exports.userJoin = async (socket, io, user, roomID) => {
     room.users.push(newUser.userId);
     room.save();
 
+    const greetings = [ `A wild ${user.nickname} appeared!`, `Everyone welcome ${user.nickname}!`, `A ${user.nickname} has spawned in the room!`, `Swoooosh. ${user.nickname} just landed!`, `${user.nickname} just slid into the room!` ];
+    const index = ~~(Math.random() * greetings.length);
+
     const messageData = {
+      type: 'default',
       room: roomID,
       user: adminUser,
-      message: `A wild ${user.nickname} appeared!`,
+      message: greetings[index],
       date: new Date().getTime(),
     };
 

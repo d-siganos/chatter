@@ -5,9 +5,5 @@ export const encrypt = (text: string, key: string) => {
 }
 
 export const decrypt = (cipher: string, key: string) => {
-  if (cipher.startsWith("A wild")) {
-    return cipher;
-  }
-
   return AES.decrypt(cipher, key).toString(enc.Utf8);
 }

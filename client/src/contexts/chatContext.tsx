@@ -8,6 +8,8 @@ type ChatContent = {
   setMessage: React.Dispatch<React.SetStateAction<string>>,
   messages: any,
   setMessages: React.Dispatch<React.SetStateAction<any[]>>,
+  images: any,
+  setImages: React.Dispatch<React.SetStateAction<any[]>>,
   showModal: Boolean,
   setShowModal: React.Dispatch<React.SetStateAction<Boolean>>,
 };
@@ -23,6 +25,7 @@ export const ChatProvider: React.FC = ({ children }) => {
   const [room, setRoom] = useState<string>('chat');
   const [message, setMessage] = useState<string>('');
   const [messages, setMessages] = useState<Array<any>>([]);
+  const [images, setImages] = useState<Array<any>>([]);
   const [showModal, setShowModal] = useState<Boolean>(false);
 
   const value = {
@@ -30,6 +33,7 @@ export const ChatProvider: React.FC = ({ children }) => {
     room, setRoom,
     message, setMessage,
     messages, setMessages,
+    images, setImages,
     showModal, setShowModal,
   };
 
