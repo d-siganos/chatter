@@ -12,5 +12,10 @@ const messageSchema = Schema({
 
 let Message = mongoose.model('Message', messageSchema);
 
+// TESTING PURPOSES
+// Message.deleteMany({}).then(() => {
+//   console.log("Message data deleted");
+// });
+
 exports.messageSchema = messageSchema;
 exports.Message = Message;

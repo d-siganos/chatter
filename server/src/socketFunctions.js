@@ -4,20 +4,20 @@ const { User } = require('./models/userModel');
 
 const adminUser = { username: 'Admin', nickname: 'Admin', avatarLink: 'https://avatars.dicebear.com/api/gridy/Admin.svg' };
 
-const sendMessage = async (io, roomName, messageData) => {
+const sendMessage = async (io, roomID, messageData) => {
   io.emit('message', messageData);
 
   const message = Message(messageData);
   message.save();
-    
-  const room = await Room.findOne({ name: roomName });
+  
+  const room = await Room.findById(roomID);
   room.messages.push(message.id);
   room.save();
 
   console.log('Message sent');
 }
 
-const createRoom = async roomName => {
+exports.createRoom = async roomName => {
   const key = Math.random().toString(16).slice(2);
 
   const room = Room({
@@ -30,26 +30,26 @@ const createRoom = async roomName => {
   
   await room.save();
 
+  console.log('Room created');
+
   return room;
 }
 
-exports.userJoin = async (socket, io, user, roomName) => {
-  socket.join(roomName);
+exports.userJoin = async (socket, io, user, roomID) => {
+  socket.join(roomID);
 
-  let room = await Room.findOne({ name: roomName }).populate("users");
+  let room = await Room.findById(roomID).populate("users");
 
-  if (!room) {
-    room = await createRoom(roomName);
-  }
+  if (!room) return;
 
-  if (!room.users.some(user_ => user_.username === user.username)) {
+  if (room.users.indexOf(user.userId) === -1) {
     let newUser = await User.findOne({ "username": user.username });   
 
-    room.users.push(newUser.id);
+    room.users.push(newUser.userId);
     room.save();
 
     const messageData = {
-      room: roomName,
+      room: roomID,
       user: adminUser,
       message: `A wild ${user.nickname} appeared!`,
       date: new Date().getTime(),
@@ -57,7 +57,7 @@ exports.userJoin = async (socket, io, user, roomName) => {
 
     console.log('New user joined');
       
-    await sendMessage(io, roomName, messageData);
+    await sendMessage(io, roomID, messageData);
   }
 
   return room.key;

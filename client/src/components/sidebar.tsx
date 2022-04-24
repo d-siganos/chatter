@@ -21,7 +21,7 @@ const RoomIcon = ({ room, currentRoom }: { room: any, currentRoom: string }) => 
   }
 
   return (
-    <Link to={`/app/${room?.name}`} onContextMenu={handleRightClick} className="mx-auto my-2 h-12 w-12">
+    <Link to={`/app/${room?._id}`} onContextMenu={handleRightClick} className="mx-auto my-2 h-12 w-12">
       <img
         className={`${room?.name === currentRoom ? "rounded-2xl" : "rounded-full"} hover:rounded-2xl transition-all duration-300 ease-linear cursor-pointer shadow-lg`}
         src={room?.avatarLink} />
@@ -36,12 +36,12 @@ const Sidebar = ({ user, currentRoom, loading }: { user: any, currentRoom: strin
   const [rooms, setRooms] = useState<Array<any>>([]);
 
   useEffect(() => {
-    const getRooms = async (user: string | null | undefined) => {
-      const res = await axios.get(`${ENDPOINT}/users/${user}/rooms`);
+    const getRooms = async (userId: string | null | undefined) => {
+      const res = await axios.get(`${ENDPOINT}/users/${userId}/rooms`);
       setRooms(res.data);
     }
 
-    getRooms(user?.username);
+    getRooms(user?.uid);
   }, [loading]);
 
   const logOut = async () => {

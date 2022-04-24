@@ -4,7 +4,7 @@ module.exports = app => {
   let router = require('express').Router();
   
   router.post("/", createUser);
-  router.get("/:name/rooms", findAllRooms);
+  router.get("/:userId/rooms", findAllRooms);
 
   app.use('/users', router);
 }

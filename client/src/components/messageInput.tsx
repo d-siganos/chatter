@@ -6,7 +6,7 @@ import { ImAttachment } from 'react-icons/im';
 import { IoImageOutline } from 'react-icons/io5';
 import { RiSendPlane2Fill } from 'react-icons/ri';
 
-const MessageInput = ({ sendMessage }: { sendMessage:any }) => {
+const MessageInput = ({ sendMessage }: { sendMessage: any }) => {
   const { message, setMessage } = useChat();
 
   return (

@@ -4,7 +4,7 @@ const socket = require('socket.io');
 const bodyParser  = require('body-parser');
 const cors = require('cors');
 
-const { sendMessage, userJoin } = require('./socketFunctions');
+const { sendMessage, userJoin, createRoom } = require('./socketFunctions');
 const PORT = process.env.PORT || 8080;
 
 const app = express();
@@ -26,13 +26,18 @@ const io = socket(server, {
 io.on('connection', socket => {
   console.log('Connection established');
 
-  socket.on('join', async ({ user, room }, callback) => {
-    const key = await userJoin(socket, io, user, room);
+  socket.on('join', async ({ user, roomID }, callback) => {
+    const key = await userJoin(socket, io, user, roomID);
     if (callback) callback(key);
   });
 
-  socket.on('sendMessage', ({ room, messageData }) => {
-    sendMessage(io, room, messageData);
+  socket.on('createRoom', async ({ roomName }, callback) => {
+    const room = await createRoom(roomName);
+    if (callback) callback(room);
+  });
+
+  socket.on('sendMessage', ({ roomID, messageData }) => {
+    sendMessage(io, roomID, messageData);
   });
 
   socket.on('disconnect', () => {

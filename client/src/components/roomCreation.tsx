@@ -1,20 +1,18 @@
 import React, { useRef } from 'react';
-import { useAuth } from '../contexts/authContext';
 import { useChat } from '../contexts/chatContext';
-import { useHistory } from 'react-router-dom';
 import { IoIosCloseCircleOutline } from 'react-icons/io';
 
-const RoomCreation = () => {
-  const history = useHistory();
-  const { currentUser } = useAuth();
+const RoomCreation = ({ nickname, emitRoomCreation }: { nickname: string, emitRoomCreation: any }) => {
   const { setShowModal } = useChat();
 
   const roomRef = useRef<HTMLInputElement>(null);
 
-  const createRoom = () => {
+  const createRoom = async () => {
     let roomName = roomRef.current?.value;
+
     setShowModal(false);
-    history.push(`/app/${roomName}`);
+
+    await emitRoomCreation(roomName);
   };
 
   return (
@@ -29,7 +27,7 @@ const RoomCreation = () => {
             <label className="ml-3 text-sm font-bold text-gray-700 tracking-wide">Room name</label>
             <input
               className="w-full text-base px-4 py-2 border-b border-gray-300 focus:outline-none rounded-2xl focus:border-indigo-500"
-              ref={roomRef} type="text" placeholder="Enter a room name" defaultValue={`${currentUser?.email}'s room`} />
+              ref={roomRef} type="text" placeholder="Enter a room name" defaultValue={`${nickname}'s room`} />
             <div className="flex flex-row-reverse pt-4">
               <button
                 onClick={createRoom}
