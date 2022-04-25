@@ -125,6 +125,18 @@ const Dashboard = () => {
     socket.current?.emit('sendMessage', { roomID, messageData });
   };
 
+  const sendAttachment = async (base64: any) => {
+    const messageData = {
+      type: 'attachment',
+      room: roomID,
+      user: user.current,
+      message: base64,
+      date: new Date().getTime(),
+    };
+
+    socket.current?.emit('sendMessage', { roomID, messageData });
+  };
+
   const emitRoomCreation = async (roomName: string) => {
     await socket.current?.emit('createRoom', { roomName }, createRoomCallback);
   }
@@ -168,7 +180,7 @@ const Dashboard = () => {
               <Messages user={user.current} messageId={messageId} encryptionKey={encryptionKey} /> )
             : null
           }
-          {roomID && roomExists ? <MessageInput sendMessage={sendMessage} /> : null}
+          {roomID && roomExists ? <MessageInput sendMessage={sendMessage} sendAttachment={sendAttachment} /> : null}
         </div>
       </div>
     </>

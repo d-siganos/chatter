@@ -10,6 +10,8 @@ type ChatContent = {
   setMessages: React.Dispatch<React.SetStateAction<any[]>>,
   images: any,
   setImages: React.Dispatch<React.SetStateAction<any[]>>,
+  attachments: any,
+  setAttachments: React.Dispatch<React.SetStateAction<any[]>>,
   showModal: Boolean,
   setShowModal: React.Dispatch<React.SetStateAction<Boolean>>,
 };
@@ -26,6 +28,7 @@ export const ChatProvider: React.FC = ({ children }) => {
   const [message, setMessage] = useState<string>('');
   const [messages, setMessages] = useState<Array<any>>([]);
   const [images, setImages] = useState<Array<any>>([]);
+  const [attachments, setAttachments] = useState<Array<any>>([]);
   const [showModal, setShowModal] = useState<Boolean>(false);
 
   const value = {
@@ -34,6 +37,7 @@ export const ChatProvider: React.FC = ({ children }) => {
     message, setMessage,
     messages, setMessages,
     images, setImages,
+    attachments, setAttachments,
     showModal, setShowModal,
   };
 

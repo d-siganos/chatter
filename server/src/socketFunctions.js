@@ -5,7 +5,7 @@ const { User } = require('./models/userModel');
 const adminUser = { username: 'Admin', nickname: 'Admin', avatarLink: 'https://avatars.dicebear.com/api/gridy/Admin.svg' };
 
 const sendMessage = async (io, roomID, messageData) => {
-  io.emit('message', messageData);
+  io.in(roomID).emit('message', messageData);
 
   const message = Message(messageData);
   message.save();
@@ -14,7 +14,7 @@ const sendMessage = async (io, roomID, messageData) => {
   room.messages.push(message.id);
   room.save();
 
-  console.log('Message sent');
+  console.log(`Message sent in room ${roomID}`);
 }
 
 exports.createRoom = async roomName => {

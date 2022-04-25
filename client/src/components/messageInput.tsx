@@ -6,11 +6,26 @@ import { ImAttachment } from 'react-icons/im';
 import { IoImageOutline } from 'react-icons/io5';
 import { RiSendPlane2Fill } from 'react-icons/ri';
 
-const MessageInput = ({ sendMessage }: { sendMessage: any }) => {
-  const { message, setMessage, setImages } = useChat();
+const MessageInput = ({ sendMessage, sendAttachment }: { sendMessage: any, sendAttachment: any }) => {
+  const { message, setMessage, setImages, setAttachments } = useChat();
 
   const onImageChange = (e: any) => {
     setImages([...e.target.files]);
+  }
+
+  const onAttachmentChange = (e: any) => {
+    const attachments = [...e.target.files];
+
+    Object.keys(attachments).forEach((i: any) => {
+      const attachment = attachments[i];
+      const reader = new FileReader();
+
+      reader.onload = () => {
+        sendAttachment(reader.result);
+      };
+
+      reader.readAsDataURL(attachment);
+    });
   }
 
   return (
@@ -25,9 +40,11 @@ const MessageInput = ({ sendMessage }: { sendMessage: any }) => {
               value={message} onChange={e => setMessage(e.target.value)} onKeyPress={e => e.key === 'Enter' ? sendMessage(e) : null} placeholder="Type your message" />
           </div>
           <div className="flex flex-row">
-            <button className="flex items-center justify-center h-10 w-8 text-gray-400">
+            <label className="flex items-center justify-center h-10 w-8 text-gray-400 ml-1 mr-2 cursor-pointer">
               <ImAttachment className="w-5 h-5" />
-            </button>
+              <input type="file" className="hidden" multiple
+                accept=".xlsx, .xls, .doc, .docx, .ppt, .pptx, .txt, .pdf" onChange={onAttachmentChange} />
+            </label>
             <label className="flex items-center justify-center h-10 w-8 text-gray-400 ml-1 mr-2 cursor-pointer">
               <IoImageOutline className="w-5 h-5" />
               <input type="file" className="hidden" multiple accept="image/*" onChange={onImageChange} />

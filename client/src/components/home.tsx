@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { MdPrivacyTip } from 'react-icons/md';
 import { RiOpenSourceFill } from 'react-icons/ri';
@@ -6,6 +7,13 @@ import { BsPhoneFill } from 'react-icons/bs';
 import chatterScreenshot from './../assets/chatter_screenshot.png';
 
 const Home = () => {
+  useEffect(() => {
+    if (process.env.NODE_ENV !== 'production') return;
+
+    // This is done to wake the server before the user begins to use the app
+    axios.get("https://chatter-js-app.herokuapp.com");
+  }, [])
+  
   return (
     <div>
       <div className="bg-gradient-to-r from-indigo-500 to-blue-600 relative">

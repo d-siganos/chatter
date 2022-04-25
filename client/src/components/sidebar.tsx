@@ -55,7 +55,10 @@ const Sidebar = ({ user, currentRoom, loading }: { user: any, currentRoom: strin
       {rooms.map((room, i) => (
         <RoomIcon key={i} room={room} currentRoom={currentRoom} />
       ))}
-      <SidebarIcon icon={<BsPlus size="32" onClick={() => setShowModal(true)} />} />
+      <div className="mt-auto">
+        <SidebarIcon icon={<BsPlus size="32" onClick={() => setShowModal(true)} />} />
+        <img className="mx-auto my-2 h-12 w-12" src={user?.photoURL} alt="Profile" referrerPolicy="no-referrer" />
+      </div>
     </div>
   );
 }

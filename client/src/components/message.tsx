@@ -4,6 +4,8 @@ import remarkGfm from 'remark-gfm';
 import { decrypt } from '../crypto';
 import ScrollToBottomDiv from './scrollToBottom';
 
+import { AiOutlineDownload } from 'react-icons/ai';
+
 const Message = ({ lastMessages, messageId, user, encryptionKey }: { lastMessages: any, messageId: string, user: any, encryptionKey: string }) => {
   const message = lastMessages[0];
   const previousMessage = lastMessages[1];
@@ -39,6 +41,14 @@ const Message = ({ lastMessages, messageId, user, encryptionKey }: { lastMessage
             : null
           }
           {message?.type === 'image' ? <img src={message?.message} className="p-2 object-contain max-w-64 max-h-64" alt="Attachment" /> : null}
+          {message?.type === 'attachment'
+            ? <>
+                <a href={message?.message} download>
+                  <AiOutlineDownload  className="inline mr-2" size="32" />
+                  <p className="text-sm inline mr-1">Download attachment</p>
+                </a>
+              </>
+            : null}
           <span className="text-xs text-gray-400">{dateToShow}</span>
         </div>
       </div>
