@@ -5,16 +5,32 @@ const { User } = require('./models/userModel');
 const adminUser = { username: 'Admin', nickname: 'Admin', avatarLink: 'https://avatars.dicebear.com/api/gridy/Admin.svg' };
 
 const sendMessage = async (io, roomID, messageData) => {
-  io.in(roomID).emit('message', messageData);
-
   const message = Message(messageData);
   message.save();
+
+  messageData._id = message.id;
+  io.in(roomID).emit('message', messageData);
   
   const room = await Room.findById(roomID);
   room.messages.push(message.id);
   room.save();
 
   console.log(`Message sent in room ${roomID}`);
+}
+
+exports.deleteMessage = async (io, messageID, roomID) => {
+  const room = await Room.findById(roomID);
+  const index = room.messages.indexOf(messageID);
+
+  if (index === -1) return;
+
+  room.messages.splice(index, 1);
+
+  io.in(roomID).emit('messageDeletion', messageID);
+
+  await Message.deleteOne({ _id: messageID });
+
+  console.log(`Message deleted in room ${roomID}`);
 }
 
 exports.createRoom = async roomName => {

@@ -27,7 +27,7 @@ const ThemeIcon = () => {
 };
 
 const Dashboard = () => {
-  let { roomID = '', messageId = '' }: { roomID: string, messageId: string } = useParams();
+  let { roomID = '', currentMessageId = '' }: { roomID: string, currentMessageId: string } = useParams();
   const { currentUser } = useAuth();
   const { ENDPOINT, message, setMessage, setMessages, images, showModal } = useChat();
   const [loading, setLoading] = useState<boolean>(false);
@@ -77,8 +77,13 @@ const Dashboard = () => {
     }
     
     socket.current = io(ENDPOINT, { transports: ['websocket'], secure: true, upgrade: false });
+
     socket.current?.on('message', messageData => {
       setMessages((oldMessages: Array<any>) => [...oldMessages, messageData]);
+    });
+
+    socket.current?.on('messageDeletion', messageID => {
+      setMessages((oldMessages: Array<any>) => oldMessages.filter((msg: any) => msg._id !== messageID));
     });
 
     postUser();
@@ -92,7 +97,7 @@ const Dashboard = () => {
       socket.current?.off('message');
       socket.current?.disconnect();
     };
-  }, [ENDPOINT, roomID]);
+  }, [roomID]);
 
   const sendMessage = async (event: React.KeyboardEvent<HTMLInputElement> | null) => {
     event?.preventDefault();
@@ -112,6 +117,10 @@ const Dashboard = () => {
       history.push(`/app/${roomID}`);
     }
   };
+
+  const deleteMessage = async (messageID: string) => {
+    await socket.current?.emit('deleteMessage', { messageID, roomID });
+  }
 
   const sendImage = async (base64: any) => {
     const messageData = {
@@ -177,7 +186,7 @@ const Dashboard = () => {
           {roomID && roomExists ?
             (loading ?
               <SkeletonMessages /> :
-              <Messages user={user.current} messageId={messageId} encryptionKey={encryptionKey} /> )
+              <Messages user={user.current} messageId={currentMessageId} encryptionKey={encryptionKey} deleteMessage={deleteMessage} /> )
             : null
           }
           {roomID && roomExists ? <MessageInput sendMessage={sendMessage} sendAttachment={sendAttachment} /> : null}

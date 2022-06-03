@@ -4,9 +4,12 @@ import remarkGfm from 'remark-gfm';
 import { decrypt } from '../crypto';
 import ScrollToBottomDiv from './scrollToBottom';
 
-import { AiOutlineDownload } from 'react-icons/ai';
+import { AiOutlineDownload, AiOutlineDelete, AiOutlineLink } from 'react-icons/ai';
+import { FiVolume2 } from 'react-icons/fi';
 
-const Message = ({ lastMessages, messageId, user, encryptionKey }: { lastMessages: any, messageId: string, user: any, encryptionKey: string }) => {
+let tts = new SpeechSynthesisUtterance();
+
+const Message = ({ lastMessages, messageId, user, encryptionKey, deleteMessage }: { lastMessages: any, messageId: string, user: any, encryptionKey: string, deleteMessage: any }) => {
   const message = lastMessages[0];
   const previousMessage = lastMessages[1];
 
@@ -20,13 +23,28 @@ const Message = ({ lastMessages, messageId, user, encryptionKey }: { lastMessage
 
   const dateToShow = date.toLocaleDateString() === dateString ? `${("00" + date.getHours()).slice(-2)}:${("00" + date.getMinutes()).slice(-2)}` : date.toLocaleDateString();
 
+  const listen = () => {
+    tts.text = decrypt(message?.message, encryptionKey);
+    window.speechSynthesis.speak(tts);
+  };
+
+  const copyLink = () => {
+    navigator.clipboard.writeText(`${window.location.href}/${message?._id}`);
+  };
+
   return (
     <>
       { isHighlighted  ? <ScrollToBottomDiv /> : null }
       <div id={message?._id} className={`w-full flex ${message?.user.username === user.username ? "flex-row-reverse" : ""} ${hideAvatar ? "mt-1" : "mt-3"}`}>
         <img className={`h-12 w-12 ${hideAvatar ? "invisible" : ""}`} src={message?.user.avatarLink} alt={message?.user.nickname} referrerPolicy="no-referrer"></img>
-        <div className={`px-4 pb-4 pt-2 max-w-xl text-gray-300 ${isHighlighted ? "highlightedMessage" : (isFromMe? "bg-purple-700" : "bg-gray-700")} ${isFromMe ? "rightMessage" : "leftMessage"}`}>
-          <span className="text-xs block">{message?.user.nickname}</span>
+        <div className={`group px-4 pb-4 pt-2 max-w-xl text-gray-300 ${isHighlighted ? "highlightedMessage" : (isFromMe? "bg-purple-700" : "bg-gray-700")} ${isFromMe ? "rightMessage" : "leftMessage"}`}>
+          <span className="text-xs inline">{message?.user.nickname}</span>
+          <div className="invisible group-hover:visible float-right ml-1">
+            {message?.type === "text" ? <FiVolume2 className="inline" onClick={listen} /> : null}
+            {isFromMe ? <AiOutlineDelete className="inline" onClick={() => deleteMessage(message?._id)} /> : null}
+            <AiOutlineLink className="inline" onClick={copyLink} />
+          </div>
+          <div className="block" />
           {message?.type === "text" || message?.type === "default"
             ? <ReactMarkdown remarkPlugins={[[remarkGfm, {singleTilde: false}]]}
                 components={{
@@ -44,7 +62,7 @@ const Message = ({ lastMessages, messageId, user, encryptionKey }: { lastMessage
           {message?.type === 'attachment'
             ? <>
                 <a href={message?.message} download>
-                  <AiOutlineDownload  className="inline mr-2" size="32" />
+                  <AiOutlineDownload className="inline mr-2" size="32" />
                   <p className="text-sm inline mr-1">Download attachment</p>
                 </a>
               </>

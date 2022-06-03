@@ -4,7 +4,7 @@ const socket = require('socket.io');
 const bodyParser  = require('body-parser');
 const cors = require('cors');
 
-const { sendMessage, userJoin, createRoom } = require('./socketFunctions');
+const { sendMessage, deleteMessage, userJoin, createRoom } = require('./socketFunctions');
 const PORT = process.env.PORT || 8080;
 
 const app = express();
@@ -38,6 +38,10 @@ io.on('connection', socket => {
 
   socket.on('sendMessage', ({ roomID, messageData }) => {
     sendMessage(io, roomID, messageData);
+  });
+
+  socket.on('deleteMessage', ({ messageID, roomID }) => {
+    deleteMessage(io, messageID, roomID);
   });
 
   socket.on('disconnect', () => {

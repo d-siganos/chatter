@@ -7,7 +7,7 @@ import { IoImageOutline } from 'react-icons/io5';
 import { RiSendPlane2Fill } from 'react-icons/ri';
 
 const MessageInput = ({ sendMessage, sendAttachment }: { sendMessage: any, sendAttachment: any }) => {
-  const { message, setMessage, setImages, setAttachments } = useChat();
+  const { message, setMessage, setImages } = useChat();
 
   const onImageChange = (e: any) => {
     setImages([...e.target.files]);
