@@ -119,7 +119,7 @@ const Dashboard = () => {
   };
 
   const deleteMessage = async (messageID: string) => {
-    await socket.current?.emit('deleteMessage', { messageID, roomID });
+    await socket.current?.emit('deleteMessage', { messageID, userID: user.current._id, roomID });
   }
 
   const sendImage = async (base64: any) => {

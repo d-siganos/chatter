@@ -18,12 +18,13 @@ const sendMessage = async (io, roomID, messageData) => {
   console.log(`Message sent in room ${roomID}`);
 }
 
-exports.deleteMessage = async (io, messageID, roomID) => {
+exports.deleteMessage = async (io, messageID, userID, roomID) => {
   const room = await Room.findById(roomID);
+
+  if (room.users.indexOf(userID) === -1) return;
+
   const index = room.messages.indexOf(messageID);
-
   if (index === -1) return;
-
   room.messages.splice(index, 1);
 
   io.in(roomID).emit('messageDeletion', messageID);

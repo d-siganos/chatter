@@ -40,8 +40,8 @@ io.on('connection', socket => {
     sendMessage(io, roomID, messageData);
   });
 
-  socket.on('deleteMessage', ({ messageID, roomID }) => {
-    deleteMessage(io, messageID, roomID);
+  socket.on('deleteMessage', ({ messageID, userID, roomID }) => {
+    deleteMessage(io, messageID, userID, roomID);
   });
 
   socket.on('disconnect', () => {
