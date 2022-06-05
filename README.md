@@ -1,6 +1,13 @@
 # Chatter
 
-Chatter is a web chat app, made for educational purposes.
+Chatter is a web chat app, made for educational purposes. It enables you to:
+- Sign up with 1 (or more) accounts
+- Create private chatrooms, which can be shared using links
+- Send encrypted text and image messages in real-time
+- Delete the messages you've sent
+- Upload .pdf, .docx, .xslx and many other files
+- Send links to specific messages
+- ... and more!
 
 ## Using
 ### Installation
