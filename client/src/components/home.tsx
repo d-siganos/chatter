@@ -55,7 +55,8 @@ const Home = () => {
           </div>
         </div>
       </div>
-      <p className="text-center text-sm font-thin">Created by <a className="text-blue-600" href="https://bonfirescratch.github.io/">Bonfire</a></p>
+      <p className="text-center text-sm font-thin pb-12">Created by <a className="text-blue-600" href="
+https://diogenis-siganos.netlify.app/">D. Siganos</a></p>
     </div>
   );
 }

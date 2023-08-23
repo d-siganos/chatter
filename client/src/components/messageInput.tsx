@@ -10,7 +10,7 @@ import { RiSendPlane2Fill } from 'react-icons/ri';
 const MicButton = () => {
   const isSpeechRecognitionOn = SpeechRecognition.browserSupportsSpeechRecognition();
   const { setMessage } = useChat();
-  const { transcript, interimTranscript, finalTranscript, resetTranscript, listening } = useSpeechRecognition();
+  const { interimTranscript, finalTranscript, resetTranscript, listening } = useSpeechRecognition();
 
   useEffect(() => {
     if (finalTranscript !== '') {

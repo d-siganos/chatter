@@ -1,5 +1,7 @@
 # Chatter
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/d7a72f86-60fb-4aad-8c66-45ed01d6edee/deploy-status)](https://app.netlify.com/sites/chatter-js-app/deploys)
+
 Chatter is a web chat app, made for educational purposes. It enables you to:
 - Sign up with 1 (or more) accounts
 - Create private chatrooms, which can be shared using links
@@ -39,12 +41,11 @@ Chatter is a web chat app, made for educational purposes. It enables you to:
 > netlify deploy
 ```
 
-### Dockerising/Deploying the back-end
+### Deploying the back-end
 
 ```bash
 > cd server
-> docker build .
-> heroku container:push web
+> npm run prod
 ```
 
 ## Contributing
