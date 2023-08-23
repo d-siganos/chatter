@@ -11,7 +11,7 @@ const Home = () => {
     if (process.env.NODE_ENV !== 'production') return;
 
     // This is done to wake the server before the user begins to use the app
-    axios.get("https://chatter-js-app.herokuapp.com");
+    axios.get("https://chatter-js-backend.onrender.com");
   }, [])
   
   return (

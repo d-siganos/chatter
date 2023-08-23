@@ -23,7 +23,7 @@ export const useChat = () => {
 }
 
 export const ChatProvider: React.FC = ({ children }) => {
-  const ENDPOINT:string = process.env.NODE_ENV === 'production' ? "https://chatter-js-app.herokuapp.com" : "http://localhost:8080";
+  const ENDPOINT:string = process.env.NODE_ENV === 'production' ? "https://chatter-js-backend.onrender.com/" : "http://localhost:8080";
   const [room, setRoom] = useState<string>('chat');
   const [message, setMessage] = useState<string>('');
   const [messages, setMessages] = useState<Array<any>>([]);
