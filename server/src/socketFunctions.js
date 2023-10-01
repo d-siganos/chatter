@@ -2,7 +2,7 @@ const Room = require('./models/roomModel');
 const { Message } = require('./models/messageModel');
 const { User } = require('./models/userModel');
 
-const adminUser = { username: 'Admin', nickname: 'Admin', avatarLink: 'https://avatars.dicebear.com/api/gridy/Admin.svg' };
+const adminUser = { username: 'Admin', nickname: 'Admin', avatarLink: 'https://api.dicebear.com/7.x/bottts/svg?seed=Admin' };
 
 const sendMessage = async (io, roomID, messageData) => {
   const message = Message(messageData);
@@ -39,7 +39,7 @@ exports.createRoom = async roomName => {
 
   const room = Room({
     name: roomName,
-    avatarLink: `https://avatars.dicebear.com/api/initials/${roomName}.svg`,
+    avatarLink: `https://api.dicebear.com/7.x/initials/svg?seed=${roomName}`,
     users: [],
     messages: [],
     key,

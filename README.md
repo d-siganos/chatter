@@ -58,7 +58,7 @@ Feel free to submit a pull request. For major changes, please open an issue firs
 - MongoDB
 - Firebase Auth
 
-The front-end is hosted on Netlify, while the back-end is deployed using Heroku.
+The front-end is hosted on Netlify, while the back-end is deployed using Render.
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)

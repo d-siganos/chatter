@@ -21,7 +21,7 @@ exports.createUser = async (req, res) => {
     }
 
     const nickname = req.body.nickname || req.body.username.replace(/@[^@]+$/);
-    const avatarLink = req.body.avatarLink || `https://avatars.dicebear.com/api/gridy/${req.body.username}.svg`;
+    const avatarLink = req.body.avatarLink || `https://api.dicebear.com/7.x/bottts/svg?seed=${req.body.username}`;
 
     const user = new User({ "userId": req.body.id, "username": req.body.username, "nickname": nickname, "avatarLink": avatarLink });
     user.save();
